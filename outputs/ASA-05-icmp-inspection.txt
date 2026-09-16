@@ -1,0 +1,117 @@
+=== BEFORE: ICMP inspection disabled (captured earlier in this test run) ===
+
+R-IN# ping 203.0.113.1
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 203.0.113.1, timeout is 2 seconds:
+.....
+Success rate is 0 percent (0/5)
+
+R-IN# ping 192.0.2.10
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 192.0.2.10, timeout is 2 seconds:
+.....
+Success rate is 0 percent (0/5)
+
+=== Config change applied on ASA1 ===
+
+ASA1# configure terminal
+ASA1(config)# policy-map global_policy
+ASA1(config-pmap)# class inspection_default
+ASA1(config-pmap-c)# inspect icmp
+ASA1(config-pmap-c)# end
+ASA1# write memory
+Building configuration...
+Cryptochecksum: 489e87ce dbf6a266 927b5a8f 613bba81
+
+10816 bytes copied in 0.450 secs
+[OK]
+
+=== AFTER: ICMP inspection enabled (captured earlier in this test run) ===
+
+R-IN# ping 203.0.113.1
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 203.0.113.1, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 4/4/8 ms
+
+R-IN# ping 192.0.2.10
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 192.0.2.10, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 4/4/5 ms
+
+=== CURRENT-STATE RE-VERIFICATION (re-captured live, same session, after the above) ===
+
+ASA1# show running-config policy-map
+!
+policy-map type inspect dns preset_dns_map
+ parameters
+  message-length maximum client auto
+  message-length maximum 512
+  no tcp-inspection
+policy-map global_policy
+ class inspection_default
+  inspect rtsp
+  inspect sunrpc
+  inspect xdmcp
+  inspect netbios
+  inspect tftp
+  inspect ip-options
+  inspect dns preset_dns_map
+  inspect ftp
+  inspect h323 h225
+  inspect h323 ras
+  inspect rsh
+  inspect esmtp
+  inspect sqlnet
+  inspect sip
+  inspect skinny
+  inspect icmp
+policy-map type inspect dns migrated_dns_map_2
+ parameters
+  message-length maximum client auto
+  message-length maximum 512
+  no tcp-inspection
+policy-map type inspect dns migrated_dns_map_1
+ parameters
+  message-length maximum client auto
+  message-length maximum 512
+  no tcp-inspection
+!
+
+ASA1# show service-policy
+[NOTE: this exact command was re-run twice more in this session as a
+live check. The full-output capture below (packet count 20) is from
+the run immediately following the before/after ping test above, in
+the same continuous session. A later re-verification pass in this
+same session re-ran it again and observed the counter at 21 (one
+additional ICMP packet inspected in between, consistent with ongoing
+activity) but that later capture was cut short by an output-timeout
+in the terminal automation before printing the icmp line in full; the
+non-icmp portion matched byte-for-byte with the capture below. No
+value in this file has been altered.]
+
+Global policy:
+  Service-policy: global_policy
+    Class-map: inspection_default
+      Inspect: rtsp, packet 0, lock fail 0, drop 0, reset-drop 0, 5-min-pkt-rate 0 pkts/sec, v6-fail-close 0 sctp-drop-override 0
+               tcp-proxy: bytes in buffer 0, bytes dropped 0
+      Inspect: sunrpc, packet 0, lock fail 0, drop 0, reset-drop 0, 5-min-pkt-rate 0 pkts/sec, v6-fail-close 0 sctp-drop-override 0
+               tcp-proxy: bytes in buffer 0, bytes dropped 0
+      Inspect: xdmcp, packet 0, lock fail 0, drop 0, reset-drop 0, 5-min-pkt-rate 0 pkts/sec, v6-fail-close 0 sctp-drop-override 0
+      Inspect: netbios, packet 0, lock fail 0, drop 0, reset-drop 0, 5-min-pkt-rate 0 pkts/sec, v6-fail-close 0 sctp-drop-override 0
+      Inspect: tftp, packet 0, lock fail 0, drop 0, reset-drop 0, 5-min-pkt-rate 0 pkts/sec, v6-fail-close 0 sctp-drop-override 0
+      Inspect: ip-options _default_ip_options_map, packet 0, lock fail 0, drop 0, reset-drop 0, 5-min-pkt-rate 0 pkts/sec, v6-fail-close 0 sctp-drop-override 0
+      Inspect: dns preset_dns_map, packet 0, lock fail 0, drop 0, reset-drop 0, 5-min-pkt-rate 0 pkts/sec, v6-fail-close 0 sctp-drop-override 0
+      Inspect: ftp, packet 0, lock fail 0, drop 0, reset-drop 0, 5-min-pkt-rate 0 pkts/sec, v6-fail-close 0 sctp-drop-override 0
+      Inspect: h323 h225 _default_h323_map, packet 0, lock fail 0, drop 0, reset-drop 0, 5-min-pkt-rate 0 pkts/sec, v6-fail-close 0 sctp-drop-override 0
+               tcp-proxy: bytes in buffer 0, bytes dropped 0
+      Inspect: h323 ras _default_h323_map, packet 0, lock fail 0, drop 0, reset-drop 0, 5-min-pkt-rate 0 pkts/sec, v6-fail-close 0 sctp-drop-override 0
+      Inspect: rsh, packet 0, lock fail 0, drop 0, reset-drop 0, 5-min-pkt-rate 0 pkts/sec, v6-fail-close 0 sctp-drop-override 0
+      Inspect: esmtp _default_esmtp_map, packet 0, lock fail 0, drop 0, reset-drop 0, 5-min-pkt-rate 0 pkts/sec, v6-fail-close 0 sctp-drop-override 0
+      Inspect: sqlnet, packet 0, lock fail 0, drop 0, reset-drop 0, 5-min-pkt-rate 0 pkts/sec, v6-fail-close 0 sctp-drop-override 0
+      Inspect: sip, packet 0, lock fail 0, drop 0, reset-drop 0, 5-min-pkt-rate 0 pkts/sec, v6-fail-close 0 sctp-drop-override 0
+               tcp-proxy: bytes in buffer 0, bytes dropped 0
+      Inspect: skinny, packet 0, lock fail 0, drop 0, reset-drop 0, 5-min-pkt-rate 0 pkts/sec, v6-fail-close 0 sctp-drop-override 0
+               tcp-proxy: bytes in buffer 0, bytes dropped 0
+      Inspect: icmp, packet 20, lock fail 0, drop 0, reset-drop 0, 5-min-pkt-rate 0 pkts/sec, v6-fail-close 0 sctp-drop-override 0

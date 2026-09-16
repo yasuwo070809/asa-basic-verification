@@ -1,0 +1,239 @@
+packet-tracer input inside icmp 10.10.10.10 8 0 203.0.113.1 detailed
+
+Phase: 1
+Type: ROUTE-LOOKUP
+Subtype: No ECMP load balancing
+Result: ALLOW
+Elapsed time: 48678 ns
+Config:
+Additional Information:
+Destination is locally connected. No ECMP load balancing.
+Found next-hop 203.0.113.1 using egress ifc  outside
+
+Phase: 2
+Type: NAT
+Subtype: per-session
+Result: ALLOW
+Elapsed time: 13450 ns
+Config:
+Additional Information:
+ Forward Flow based lookup yields rule:
+ in  id=0x7ff0511f7570, priority=0, domain=nat-per-session, deny=true
+	hits=55, user_data=0x0000000000000000, cs_id=0x0, reverse, use_real_addr, flags=0x0, protocol=0
+	src ip/id=0.0.0.0, mask=0.0.0.0, port=0, tag=any
+	dst ip/id=0.0.0.0, mask=0.0.0.0, port=0, tag=any,
+	dscp=0x0, input_ifc=any, output_ifc=any
+
+Phase: 3
+Type: IP-OPTIONS
+Subtype:
+Result: ALLOW
+Elapsed time: 13450 ns
+Config:
+Additional Information:
+ Forward Flow based lookup yields rule:
+ in  id=0x7ff050f17050, priority=0, domain=inspect-ip-options, deny=true
+	hits=29, user_data=0x0000000000000000, cs_id=0x0, reverse, flags=0x0, protocol=0
+	src ip/id=0.0.0.0, mask=0.0.0.0, port=0, tag=any
+	dst ip/id=0.0.0.0, mask=0.0.0.0, port=0, tag=any
+	dscp=0x0, input_ifc=inside, output_ifc=any
+
+Phase: 4
+Type: QOS
+Subtype:
+Result: ALLOW
+Elapsed time: 38857 ns
+Config:
+Additional Information:
+ Forward Flow based lookup yields rule:
+ in  id=0x7ff050fbb2b0, priority=70, domain=qos-per-class, deny=false
+	hits=34, user_data=0x00007ff050f26820, cs_id=0x0, reverse, use_real_addr, flags=0x0, protocol=0
+	src ip/id=0.0.0.0, mask=0.0.0.0, port=0, tag=any
+	dst ip/id=0.0.0.0, mask=0.0.0.0, port=0, tag=any,
+	dscp=0x0, input_ifc=any, output_ifc=any
+
+Phase: 5
+Type: INSPECT
+Subtype: np-inspect
+Result: ALLOW
+Elapsed time: 1281 ns
+Config:
+class-map inspection_default
+ match default-inspection-traffic
+policy-map global_policy
+ class inspection_default
+  inspect icmp
+service-policy global_policy global
+Additional Information:
+ Forward Flow based lookup yields rule:
+ in  id=0x7ff050fbdaf0, priority=70, domain=inspect-icmp, deny=false
+	hits=11, user_data=0x00007ff051038f10, cs_id=0x0, use_real_addr, flags=0x0, protocol=1
+	src ip/id=0.0.0.0, mask=0.0.0.0, icmp-type=0, tag=any
+	dst ip/id=0.0.0.0, mask=0.0.0.0, icmp-code=0, tag=any,
+	dscp=0x0, input_ifc=inside, output_ifc=any
+
+Phase: 6
+Type: INSPECT
+Subtype: np-inspect
+Result: ALLOW
+Elapsed time: 1708 ns
+Config:
+Additional Information:
+ Forward Flow based lookup yields rule:
+ in  id=0x7ff050f16840, priority=66, domain=inspect-icmp-error, deny=false
+	hits=14, user_data=0x00007ff050f15c70, cs_id=0x0, use_real_addr, flags=0x0, protocol=1
+	src ip/id=0.0.0.0, mask=0.0.0.0, icmp-type=0, tag=any
+	dst ip/id=0.0.0.0, mask=0.0.0.0, icmp-code=0, tag=any,
+	dscp=0x0, input_ifc=inside, output_ifc=any
+
+Phase: 7
+Type: QOS
+Subtype:
+Result: ALLOW
+Elapsed time: 18788 ns
+Config:
+Additional Information:
+ Reverse Flow based lookup yields rule:
+ in  id=0x7ff050fbb2b0, priority=70, domain=qos-per-class, deny=false
+	hits=35, user_data=0x00007ff050f26820, cs_id=0x0, reverse, use_real_addr, flags=0x0, protocol=0
+	src ip/id=0.0.0.0, mask=0.0.0.0, port=0, tag=any
+	dst ip/id=0.0.0.0, mask=0.0.0.0, port=0, tag=any,
+	dscp=0x0, input_ifc=any, output_ifc=any
+
+Phase: 8
+Type: NAT
+Subtype: per-session
+Result: ALLOW
+Elapsed time: 0 ns
+Config:
+Additional Information:
+ Reverse Flow based lookup yields rule:
+ in  id=0x7ff0511f7570, priority=0, domain=nat-per-session, deny=true
+	hits=57, user_data=0x0000000000000000, cs_id=0x0, reverse, use_real_addr, flags=0x0, protocol=0
+	src ip/id=0.0.0.0, mask=0.0.0.0, port=0, tag=any
+	dst ip/id=0.0.0.0, mask=0.0.0.0, port=0, tag=any,
+	dscp=0x0, input_ifc=any, output_ifc=any
+
+Phase: 9
+Type: IP-OPTIONS
+Subtype:
+Result: ALLOW
+Elapsed time: 0 ns
+Config:
+Additional Information:
+ Reverse Flow based lookup yields rule:
+ in  id=0x7ff050ec0550, priority=0, domain=inspect-ip-options, deny=true
+	hits=26, user_data=0x0000000000000000, cs_id=0x0, reverse, flags=0x0, protocol=0
+	src ip/id=0.0.0.0, mask=0.0.0.0, port=0, tag=any
+	dst ip/id=0.0.0.0, mask=0.0.0.0, port=0, tag=any
+	dscp=0x0, input_ifc=outside, output_ifc=any
+
+Phase: 10
+Type: FLOW-CREATION
+Subtype:
+Result: ALLOW
+Elapsed time: 9821 ns
+
+----
+Config:
+Additional Information:
+New flow created with id 32, packet dispatched to next module
+Module information for forward flow ...
+snp_fp_inspect_ip_options
+snp_fp_inspect_icmp
+snp_fp_adjacency
+snp_fp_fragment
+snp_fp_tracer_drop
+snp_ifc_stat
+
+Module information for reverse flow ...
+snp_fp_inspect_ip_options
+snp_fp_inspect_icmp
+snp_fp_adjacency
+snp_fp_fragment
+snp_fp_tracer_drop
+snp_ifc_stat
+
+Phase: 11
+Type: INPUT-ROUTE-LOOKUP-FROM-OUTPUT-ROUTE-LOOKUP
+Subtype: Resolve Preferred Egress interface
+Result: ALLOW
+Elapsed time: 5551 ns
+Config:
+Additional Information:
+Found next-hop 203.0.113.1 using egress ifc  outside
+
+Phase: 12
+Type: ADJACENCY-LOOKUP
+Subtype: Resolve Nexthop IP address to MAC
+Result: ALLOW
+Elapsed time: 1708 ns
+Config:
+Additional Information:
+Found adjacency entry for Next-hop 203.0.113.1 on interface  outside
+Adjacency :Active
+MAC address aabb.cc00.1100 hits 0 reference 1
+
+Result:
+input-interface: inside
+input-status: up
+input-line-status: up
+output-interface: outside
+output-status: up
+output-line-status: up
+Action: allow
+Time Taken: 153292 ns
+
+ASA1# packet-tracer input outside icmp 192.0.2.10 8 0 10.10.10.10 detailed
+
+Phase: 1
+Type: ROUTE-LOOKUP
+Subtype: No ECMP load balancing
+Result: ALLOW
+Elapsed time: 24766 ns
+Config:
+Additional Information:
+Destination is locally connected. No ECMP load balancing.
+Found next-hop 10.10.10.10 using egress ifc  inside
+
+Phase: 2
+Type: NAT
+Subtype: per-session
+Result: ALLOW
+Elapsed time: 18788 ns
+Config:
+Additional Information:
+ Forward Flow based lookup yields rule:
+ in  id=0x7ff0511f7570, priority=0, domain=nat-per-session, deny=true
+	hits=57, user_data=0x0000000000000000, cs_id=0x0, reverse, use_real_addr, flags=0x0, protocol=0
+	src ip/id=0.0.0.0, mask=0.0.0.0, port=0, tag=any
+	dst ip/id=0.0.0.0, mask=0.0.0.0, port=0, tag=any,
+	dscp=0x0, input_ifc=any, output_ifc=any
+
+Phase: 3
+Type: ACCESS-LIST
+Subtype:
+Result: DROP
+Elapsed time: 18788 ns
+Config:
+Implicit Rule
+Additional Information:
+ Forward Flow based lookup yields rule:
+ in  id=0x7ff050eb9110, priority=0, domain=permit, deny=true
+	hits=16, user_data=0x000000000000000b, cs_id=0x0, use_real_addr, flags=0x1000, protocol=0
+	src ip/id=0.0.0.0, mask=0.0.0.0, port=0, tag=any
+	dst ip/id=0.0.0.0, mask=0.0.0.0, port=0, tag=any,
+	dscp=0x0, input_ifc=outside, output_ifc=any
+
+Result:
+input-interface: outside
+input-status: up
+input-line-status: up
+output-interface: inside
+output-status: up
+output-line-status: up
+Action: drop
+Time Taken: 62342 ns
+Drop-reason: (acl-drop) Flow is denied by configured rule, Drop-location: frame snp_classify_table_lookup:6167 flow (NA)/NA
+
+ASA1#
