@@ -1,0 +1,54 @@
+# WS-01 NAT/PAT tshark analysis
+
+## before-nat
+--- WS-01-before-nat-inside-link.pcap ---
+packets: 8
+frame.number	frame.time_relative	ip.src	ip.dst	ip.proto	tcp.srcport	tcp.dstport	tcp.flags.syn	tcp.flags.ack	tcp.flags.reset	tcp.flags.fin	icmp.type	icmp.code
+1	0.000000000	10.10.10.10	203.0.113.1	6	55594	7	True	False	False	False
+2	0.004792000	203.0.113.1	10.10.10.10	6	7	55594	True	True	False	False
+3	0.005340000	10.10.10.10	203.0.113.1	6	55594	7	False	True	False	False
+4	0.005548000	10.10.10.10	203.0.113.1	6	55594	7	False	True	False	False
+5	0.210808000	203.0.113.1	10.10.10.10	6	7	55594	False	True	False	False
+6	2.311475000	10.10.10.10	203.0.113.1	6	55594	7	False	True	False	False
+7	2.316949000	203.0.113.1	10.10.10.10	6	7	55594	False	True	False	False
+8	2.517926000	10.10.10.10	203.0.113.1	6	55594	7	False	True	False	False
+
+--- WS-01-before-nat-outside-link.pcap ---
+packets: 8
+frame.number	frame.time_relative	ip.src	ip.dst	ip.proto	tcp.srcport	tcp.dstport	tcp.flags.syn	tcp.flags.ack	tcp.flags.reset	tcp.flags.fin	icmp.type	icmp.code
+1	0.000000000	10.10.10.10	203.0.113.1	6	55594	7	True	False	False	False
+2	0.000894000	203.0.113.1	10.10.10.10	6	7	55594	True	True	False	False
+3	0.005276000	10.10.10.10	203.0.113.1	6	55594	7	False	True	False	False
+4	0.005350000	10.10.10.10	203.0.113.1	6	55594	7	False	True	False	False
+5	0.206842000	203.0.113.1	10.10.10.10	6	7	55594	False	True	False	False
+6	2.310691000	10.10.10.10	203.0.113.1	6	55594	7	False	True	False	False
+7	2.311599000	203.0.113.1	10.10.10.10	6	7	55594	False	True	False	False
+8	2.521327000	10.10.10.10	203.0.113.1	6	55594	7	False	True	False	False
+
+## after-nat
+--- WS-01-after-nat-inside-link.pcap ---
+packets: 8
+frame.number	frame.time_relative	ip.src	ip.dst	ip.proto	tcp.srcport	tcp.dstport	tcp.flags.syn	tcp.flags.ack	tcp.flags.reset	tcp.flags.fin	icmp.type	icmp.code
+1	0.000000000	10.10.10.10	203.0.113.1	6	23906	7	True	False	False	False
+2	0.005196000	203.0.113.1	10.10.10.10	6	7	23906	True	True	False	False
+3	0.006097000	10.10.10.10	203.0.113.1	6	23906	7	False	True	False	False
+4	0.006502000	10.10.10.10	203.0.113.1	6	23906	7	False	True	False	False
+5	0.210396000	203.0.113.1	10.10.10.10	6	7	23906	False	True	False	False
+6	2.309838000	10.10.10.10	203.0.113.1	6	23906	7	False	True	False	False
+7	2.313696000	203.0.113.1	10.10.10.10	6	7	23906	False	True	False	False
+8	2.514796000	10.10.10.10	203.0.113.1	6	23906	7	False	True	False	False
+
+--- WS-01-after-nat-outside-link.pcap ---
+packets: 8
+frame.number	frame.time_relative	ip.src	ip.dst	ip.proto	tcp.srcport	tcp.dstport	tcp.flags.syn	tcp.flags.ack	tcp.flags.reset	tcp.flags.fin	icmp.type	icmp.code
+1	0.000000000	203.0.113.2	203.0.113.1	6	23906	7	True	False	False	False
+2	0.000671000	203.0.113.1	203.0.113.2	6	7	23906	True	True	False	False
+3	0.005522000	203.0.113.2	203.0.113.1	6	23906	7	False	True	False	False
+4	0.006202000	203.0.113.2	203.0.113.1	6	23906	7	False	True	False	False
+5	0.206764000	203.0.113.1	203.0.113.2	6	7	23906	False	True	False	False
+6	2.309203000	203.0.113.2	203.0.113.1	6	23906	7	False	True	False	False
+7	2.309960000	203.0.113.1	203.0.113.2	6	7	23906	False	True	False	False
+8	2.514144000	203.0.113.2	203.0.113.1	6	23906	7	False	True	False	False
+
+## xlate table (ASA show xlate, for reference)
+TCP PAT from inside:10.10.10.10/23906 to outside:203.0.113.2/23906 flags ri idle 0:00:06 timeout 0:00:00

@@ -1,0 +1,36 @@
+# WS-02 Stateful Inspection tshark analysis
+
+## inside-initiated (expect success both links)
+--- WS-02-inside-initiated-inside-link.pcap ---
+packets: 8
+frame.number	frame.time_relative	ip.src	ip.dst	ip.proto	tcp.srcport	tcp.dstport	tcp.flags.syn	tcp.flags.ack	tcp.flags.reset	tcp.flags.fin	icmp.type	icmp.code
+1	0.000000000	10.10.10.10	203.0.113.1	6	34642	7	True	False	False	False
+2	0.010635000	203.0.113.1	10.10.10.10	6	7	34642	True	True	False	False
+3	0.011365000	10.10.10.10	203.0.113.1	6	34642	7	False	True	False	False
+4	0.011434000	10.10.10.10	203.0.113.1	6	34642	7	False	True	False	False
+5	0.215689000	203.0.113.1	10.10.10.10	6	7	34642	False	True	False	False
+6	2.306229000	10.10.10.10	203.0.113.1	6	34642	7	False	True	False	False
+7	2.309780000	203.0.113.1	10.10.10.10	6	7	34642	False	True	False	False
+8	2.511298000	10.10.10.10	203.0.113.1	6	34642	7	False	True	False	False
+
+--- WS-02-inside-initiated-outside-link.pcap ---
+packets: 8
+frame.number	frame.time_relative	ip.src	ip.dst	ip.proto	tcp.srcport	tcp.dstport	tcp.flags.syn	tcp.flags.ack	tcp.flags.reset	tcp.flags.fin	icmp.type	icmp.code
+1	0.000000000	10.10.10.10	203.0.113.1	6	34642	7	True	False	False	False
+2	0.000964000	203.0.113.1	10.10.10.10	6	7	34642	True	True	False	False
+3	0.007470000	10.10.10.10	203.0.113.1	6	34642	7	False	True	False	False
+4	0.007571000	10.10.10.10	203.0.113.1	6	34642	7	False	True	False	False
+5	0.209364000	203.0.113.1	10.10.10.10	6	7	34642	False	True	False	False
+6	2.302359000	10.10.10.10	203.0.113.1	6	34642	7	False	True	False	False
+7	2.303538000	203.0.113.1	10.10.10.10	6	7	34642	False	True	False	False
+8	2.507127000	10.10.10.10	203.0.113.1	6	34642	7	False	True	False	False
+
+## outside-initiated (expect blocked, 0 packets on inside link)
+--- WS-02-outside-initiated-inside-link.pcap ---
+packets: 0
+
+--- WS-02-outside-initiated-outside-link.pcap ---
+packets: 2
+frame.number	frame.time_relative	ip.src	ip.dst	ip.proto	tcp.srcport	tcp.dstport	tcp.flags.syn	tcp.flags.ack	tcp.flags.reset	tcp.flags.fin	icmp.type	icmp.code
+1	0.000000000	203.0.113.1	10.10.10.10	6	14488	7	True	False	False	False
+2	2.000601000	203.0.113.1	10.10.10.10	6	14488	7	True	False	False	False

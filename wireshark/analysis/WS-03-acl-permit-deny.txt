@@ -1,0 +1,44 @@
+# WS-03 ACL permit/deny tshark analysis
+
+## before ACL (outside->inside:9, expect blocked)
+--- WS-03-before-acl-inside-link.pcap ---
+packets: 0
+
+--- WS-03-before-acl-outside-link.pcap ---
+packets: 2
+frame.number	frame.time_relative	ip.src	ip.dst	ip.proto	tcp.srcport	tcp.dstport	tcp.flags.syn	tcp.flags.ack	tcp.flags.reset	tcp.flags.fin	icmp.type	icmp.code
+1	0.000000000	203.0.113.1	10.10.10.10	6	16468	9	True	False	False	False
+2	2.000318000	203.0.113.1	10.10.10.10	6	16468	9	True	False	False	False
+
+## after ACL - permit case (outside->inside:9, expect allowed)
+--- WS-03-after-acl-permit-inside-link.pcap ---
+packets: 7
+frame.number	frame.time_relative	ip.src	ip.dst	ip.proto	tcp.srcport	tcp.dstport	tcp.flags.syn	tcp.flags.ack	tcp.flags.reset	tcp.flags.fin	icmp.type	icmp.code
+1	0.000000000	203.0.113.1	10.10.10.10	6	30296	9	True	False	False	False
+2	0.001009000	10.10.10.10	203.0.113.1	6	9	30296	True	True	False	False
+3	0.007289000	203.0.113.1	10.10.10.10	6	30296	9	False	True	False	False
+4	0.007343000	203.0.113.1	10.10.10.10	6	30296	9	False	True	False	False
+5	0.208620000	10.10.10.10	203.0.113.1	6	9	30296	False	True	False	False
+6	4.015803000	203.0.113.1	10.10.10.10	6	30296	9	False	True	False	False
+7	4.217768000	10.10.10.10	203.0.113.1	6	9	30296	False	True	False	False
+
+--- WS-03-after-acl-permit-outside-link.pcap ---
+packets: 7
+frame.number	frame.time_relative	ip.src	ip.dst	ip.proto	tcp.srcport	tcp.dstport	tcp.flags.syn	tcp.flags.ack	tcp.flags.reset	tcp.flags.fin	icmp.type	icmp.code
+1	0.000000000	203.0.113.1	10.10.10.10	6	30296	9	True	False	False	False
+2	0.006762000	10.10.10.10	203.0.113.1	6	9	30296	True	True	False	False
+3	0.007370000	203.0.113.1	10.10.10.10	6	30296	9	False	True	False	False
+4	0.007438000	203.0.113.1	10.10.10.10	6	30296	9	False	True	False	False
+5	0.212708000	10.10.10.10	203.0.113.1	6	9	30296	False	True	False	False
+6	4.016640000	203.0.113.1	10.10.10.10	6	30296	9	False	True	False	False
+7	4.221466000	10.10.10.10	203.0.113.1	6	9	30296	False	True	False	False
+
+## after ACL - still-deny case (outside->inside:7, expect still blocked)
+--- WS-03-after-acl-deny-inside-link.pcap ---
+packets: 0
+
+--- WS-03-after-acl-deny-outside-link.pcap ---
+packets: 2
+frame.number	frame.time_relative	ip.src	ip.dst	ip.proto	tcp.srcport	tcp.dstport	tcp.flags.syn	tcp.flags.ack	tcp.flags.reset	tcp.flags.fin	icmp.type	icmp.code
+1	0.000000000	203.0.113.1	10.10.10.10	6	39225	7	True	False	False	False
+2	2.000042000	203.0.113.1	10.10.10.10	6	39225	7	True	False	False	False
